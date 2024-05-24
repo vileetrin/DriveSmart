@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Orbitron:wght@400..900&display=swap"
       rel="stylesheet"
@@ -15,7 +16,7 @@
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
-    <load ="partials/header.html" />
+    <div id="header"></div>
     <section class="hero-section">
       <div class="hero">
         <div class="hero-wrapper">
@@ -78,7 +79,11 @@
         </p>
       </div>
     </section>
-    <load ="partials/footer.html" />
+    <div id="footer"></div>
     <script type="module" src="./main.js"></script>
+    <script>
+      $('#header').load('partials/header.html');
+      $('#footer').load('partials/footer.html');
+  </script>
   </body>
 </html>
