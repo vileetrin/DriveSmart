@@ -1,0 +1,167 @@
+/* =====================HERO SECTION ========================= */
+
+.hero-section {
+    width: 100%;
+    height: 680px;
+    background-color: #d8d1bd;
+  }
+  
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+  }
+  
+  .hero-img {
+    width: 1070px;
+    height: 650px;
+    margin: 0;
+    padding: 0px;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  
+  .hero-title {
+    font-family: Montserrat;
+    font-size: 48px;
+    font-weight: bold;
+    width: 658px;
+  }
+  
+  .part-of-title {
+    color: #e68c3a;
+  }
+  
+  .hero-wrapper {
+    position: absolute;
+    z-index: 1;
+    right: 800px;
+    top: 130px;
+  }
+  
+  .hero-text {
+    font-family: Montserrat;
+    font-size: 20px;
+    font-weight: normal;
+    width: 353px;
+    margin-top: 10px;
+  }
+  
+  .rent-link {
+    font-family: Montserrat;
+    font-size: 20px;
+    font-weight: normal;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+    background-color: #e68c3a;
+  
+    width: 200px;
+    height: 50px;
+    border-radius: 50px;
+  
+    transition: background-color 0.4s ease;
+  }
+  
+  .rent-link:hover {
+    background-color: #a44f00;
+  }
+  
+  .hero-btn-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  
+    margin-top: 60px;
+  }
+  
+  .download-btn {
+    font-family: Montserrat;
+    font-size: 20px;
+    font-weight: normal;
+    color: #e68c3a;
+    text-align: center;
+    line-height: 40px;
+    background-color: #fff;
+  
+    width: 300px;
+    height: 50px;
+    border-radius: 50px;
+    border: 2px solid #e68c3a;
+  
+    transition: color 0.4s ease, border-color 0.4s ease;
+  }
+  
+  .download-btn:hover {
+    border-color: #a44f00;
+    color: #a44f00;
+  }
+  
+  /*===================== BENEFITS SECTION =======================*/
+  
+  .benefits-section {
+    margin-top: 50px;
+  }
+  
+  .benefits {
+    width: 940px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .benefits-title {
+    font-family: Montserrat;
+    font-size: 32px;
+    font-weight: bold;
+  
+    text-align: center;
+  }
+  
+  .benefits-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+  
+    margin-top: 50px;
+  }
+  
+  .benefits-list-item {
+    width: 420px;
+    height: 150px;
+  
+    border: 2px solid #0c1b52;
+    border-radius: 40px;
+    padding: 10px;
+  
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  
+  .benefits-list-title {
+    font-family: Montserrat;
+    font-size: 22px;
+    font-weight: bold;
+    color: #e68c3a;
+  }
+  
+  .benefits-list-text {
+    font-family: Montserrat;
+    font-size: 16px;
+  }
+  
+  .benefits-end-text {
+    font-family: Montserrat;
+    font-size: 44px;
+    font-weight: bold;
+    color: #0c1b52;
+    text-align: center;
+    margin-top: 50px;
+  }
+  

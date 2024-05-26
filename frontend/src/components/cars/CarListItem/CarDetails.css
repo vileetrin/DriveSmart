@@ -1,0 +1,12 @@
+.car-details-container {
+  display: flex;
+  flex-direction: column;
+}
+.car-details {
+  padding-right: 1rem;
+  border-right: 1px solid gray;
+}
+
+h2 {
+  align-self: flex-start;
+}
