@@ -42,6 +42,9 @@ class CarService {
     console.log({data});
     this.db.query(carSearchQuery, data, callback);
   }
+  filterCars(color, make, category, callback) {
+    this.db.query(filterCarsQuery, [color, make, category], callback)
+  }
 
   // Add more database operations here
 }

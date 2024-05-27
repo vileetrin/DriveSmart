@@ -1,0 +1,101 @@
+
+.mainheading {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: "Montserrat", sans-serif;
+    background-color: #f4f2ef;
+    font-weight: lighter;
+  }
+  
+  main {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .body__content {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    background-color: #f4f2ef;
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f2ef;
+    margin-bottom: 20px;
+  }
+  
+  .filters__elem {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .filters__elem .h2 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #0c1b52;
+  }
+  
+  .filters__elem select,
+  .filters__elem button,
+  .filter__price__input {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid #0c1b52;
+    border-radius: 25px;
+    background-color: #fff;
+    color: #2a2a2a;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .filters__elem select:hover,
+  .filters__elem button:hover,
+  .filter__price__input:hover {
+    background-color: #f0f0f0;
+    border-color: #aaa;
+  }
+  
+  .filters__elem select:focus,
+  .filters__elem button:focus,
+  .filter__price__input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+   /* Add media queries to adjust the number of columns based on screen size */
+   @media (min-width: 1200px) {
+    .content__body__elem {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  @media (min-width: 900px) and (max-width: 1199px) {
+    .content__body__elem {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media (min-width: 600px) and (max-width: 899px) {
+    .content__body__elem {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 599px) {
+    .content__body__elem {
+      grid-template-columns: 1fr;
+    }
+  }
+  .blue-line {
+    height: 2px;
+    background-color: #0c1b52;
+    margin-top: 0;
+  }

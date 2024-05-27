@@ -73,6 +73,10 @@ app.get("/cars/:id", (req, res) => {
 app.delete("/cars/:id", (req, res) => {
   controller.deleteCar(req, res);
 });
+
+app.get('/filter', (req, res) => {
+  controller.filterCars(req, res);
+});
 // Start the serverconst PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

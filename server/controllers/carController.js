@@ -64,6 +64,17 @@ class CarController {
       }
     );
   }
+  filterCars(req, res){
+    const { color, make, category } = req.body;
+    this.service.filterCars(color, make, category, (err, results) => {
+      if (err) {
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+      res.json(results);
+    });
+  }
 }
+
 // Add more controller methods here}
 module.exports = CarController;

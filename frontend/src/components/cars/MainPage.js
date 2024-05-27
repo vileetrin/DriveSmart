@@ -1,7 +1,7 @@
 import React from 'react';
 import './mainPage.css';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 import carImage from '../../img/car.png';
 
 const MainPage = () => {

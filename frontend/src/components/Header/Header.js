@@ -5,11 +5,11 @@ const Header = () => {
   return (
     <section className="header-section">
     <header className="header">
-      <a href="../index.html" className="logo">DriveSmart</a>
+      <a href="/" className="logo">DriveSmart</a>
       <nav className="main-nav">
         <ul className="main-nav-list">
           <li className="main-nav-list-item">
-            <a href="/Cars" className="main-nav-link">Пропозиції</a>
+            <a href="/Catalog" className="main-nav-link">Пропозиції</a>
           </li>
   
           <li className="main-nav-list-item">

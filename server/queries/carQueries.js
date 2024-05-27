@@ -34,6 +34,7 @@ OR LOWER(model) LIKE ?;
 `;
 
 
+
 module.exports = {
   createTableQuery,
   createCarQuery,
