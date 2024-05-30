@@ -14,8 +14,11 @@ class DBConnection {
             echo "Помилка підключення: " . $e->getMessage() . "<br>";
             die();
         }
+        
     }
-
+    public function getPdo() {
+        return $this->pdo;
+    }
     public function addUser($firstName, $lastName, $login, $email, $password, $role) {
         try {
             $sql = 'INSERT INTO users (first_name, last_name, login, email, password, role) VALUES (:firstName, :lastName, :login, :email, :password, :role)';

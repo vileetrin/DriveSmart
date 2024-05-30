@@ -3,18 +3,31 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit();
+}
+
+require_once 'DBConnection.php';
+
+$database = new DBConnection();
+$user_id = $_SESSION['user_id'];
+
+$stmt = $database->getPDO()->prepare('SELECT cars.* FROM cars JOIN favorites ON cars.car_id = favorites.car_id WHERE favorites.user_id = :user_id');
+$stmt->bindParam(':user_id', $user_id);
+$stmt->execute();
+
+$cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 if (isset($_POST['delete'])) {
-    $carIdToRemove = intval($_POST['car_id']);
-    if (isset($_SESSION['car_items'])) {
-        foreach ($_SESSION['car_items'] as $key => $item) {
-            if ($item['car_id'] === $carIdToRemove) {
-                unset($_SESSION['car_items'][$key]);
-                break;
-            }
-        }
-        // Перезаписать массив, чтобы устранить пробелы в ключах
-        $_SESSION['car_items'] = array_values($_SESSION['car_items']);
-    }
+    $car_id = intval($_POST['car_id']);
+
+    $delete_stmt = $database->getPDO()->prepare('DELETE FROM favorites WHERE user_id = :user_id AND car_id = :car_id');
+    $delete_stmt->bindParam(':user_id', $user_id);
+    $delete_stmt->bindParam(':car_id', $car_id);
+    $delete_stmt->execute();
+    
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -30,8 +43,8 @@ if (isset($_POST['delete'])) {
         <h2>Обрані автомобілі</h2>
         <div class="selected-cars">
             <?php 
-            if (isset($_SESSION['car_items']) && count($_SESSION['car_items']) > 0) {
-                foreach ($_SESSION['car_items'] as $car) { 
+            if ($cars) {
+                foreach ($cars as $car) { 
             ?>
             <div class="car-block">
                 <div class="car-info">

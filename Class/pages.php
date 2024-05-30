@@ -96,4 +96,39 @@
             include "Parts/login.php";
         }  
     }
-?>
+
+    class AccountPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Особистий кабінет";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/account.php";
+        }  
+    }
+
+    
+    class RegistrationPage extends Page 
+{
+    public function __construct()
+    {
+        $this->title = "Регістрація";
+        require_once 'Class/cars.php';
+        session_start();
+    }
+
+    public function ShowContent()
+    {
+        $contentFile = "Parts/registration.php";
+        if (file_exists($contentFile)) {
+            include $contentFile;
+        } else {
+            echo "Файл $contentFile не знайдено.";
+        }
+    }  
+}
