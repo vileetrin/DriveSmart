@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $car_id = intval($_POST['car_id']);
         $user_id = $_SESSION['user_id'];
 
-        // Перевірка, чи машина вже є в списку улюблених
+        // Check if the car is already in the favorites list
         $stmt = $database->getPDO()->prepare('SELECT COUNT(*) FROM favorites WHERE user_id = :user_id AND car_id = :car_id');
         $stmt->bindParam(':user_id', $user_id);
         $stmt->bindParam(':car_id', $car_id);
@@ -21,13 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $count = $stmt->fetchColumn();
 
         if ($count == 0) {
-            // Додавання машини до списку улюблених
+            // Add the car to the favorites list
             $stmt = $database->getPDO()->prepare('INSERT INTO favorites (user_id, car_id) VALUES (:user_id, :car_id)');
             $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':car_id', $car_id);
             $stmt->execute();
         }
     }
+
+    
+    
 }
 
 function filterCars($cars, $minPrice, $maxPrice, $brand, $category) {
@@ -65,30 +68,30 @@ if (isset($_POST['filter'])) {
                 <div class="filters__elem">
                     <div class="h2">Ціна</div>
                     <div class="filter__price">
-                        <input class="filter__price__input" type="number" name="min_price" value="0"> –
-                        <input class="filter__price__input" type="number" name="max_price" value="440000">
+                        <input class="filter__price__input" type="number" name="min_price" value="<?php echo htmlspecialchars($minPrice); ?>"> –
+                        <input class="filter__price__input" type="number" name="max_price" value="<?php echo htmlspecialchars($maxPrice); ?>">
                     </div>
                 </div>
                 <div class="filters__elem">
                     <div class="h2">Марка</div>
                     <select class="dropdown" name="brand">
                         <option value="">Виберіть марку</option>
-                        <option value="BMW">BMW</option>
-                        <option value="Toyota">Toyota</option>
-                        <option value="Tesla">Tesla</option>
-                        <option value="Mercedes">Mercedes</option>
-                        <option value="Honda">Honda</option>
+                        <option value="BMW" <?php if ($brand === 'BMW') echo 'selected'; ?>>BMW</option>
+                        <option value="Toyota" <?php if ($brand === 'Toyota') echo 'selected'; ?>>Toyota</option>
+                        <option value="Tesla" <?php if ($brand === 'Tesla') echo 'selected'; ?>>Tesla</option>
+                        <option value="Mercedes" <?php if ($brand === 'Mercedes') echo 'selected'; ?>>Mercedes</option>
+                        <option value="Honda" <?php if ($brand === 'Honda') echo 'selected'; ?>>Honda</option>
                     </select>
                 </div>
                 <div class="filters__elem">
                     <div class="h2">Категорія</div>
                     <select class="dropdown" name="category">
                         <option value="">Виберіть категорію</option>
-                        <option value="SUV">SUV</option>
-                        <option value="Sedan">Sedan</option>
-                        <option value="Coupe">Coupe</option>
-                        <option value="Van">Van</option>
-                        <option value="E-class">E-class</option>
+                        <option value="SUV" <?php if ($category === 'SUV') echo 'selected'; ?>>SUV</option>
+                        <option value="Sedan" <?php if ($category === 'Sedan') echo 'selected'; ?>>Sedan</option>
+                        <option value="Coupe" <?php if ($category === 'Coupe') echo 'selected'; ?>>Coupe</option>
+                        <option value="Van" <?php if ($category === 'Van') echo 'selected'; ?>>Van</option>
+                        <option value="E-class" <?php if ($category === 'E-class') echo 'selected'; ?>>E-class</option>
                     </select>
                 </div>
                 <div class="filters__elem">
@@ -105,42 +108,41 @@ if (isset($_POST['filter'])) {
             ?>
                 <div class="body__elem">
                     <div class="elem__img">
-                        <img src="<?php echo $car['image']; ?>" alt="<?php echo $car['model']; ?>">
+                        <img src="<?php echo htmlspecialchars($car['image']); ?>" alt="<?php echo htmlspecialchars($car['model']); ?>">
                     </div>
                     <div class="elem__text">
-                        <h3><?php echo $car['model']; ?></h3>
+                        <h3><?php echo htmlspecialchars($car['model']); ?></h3>
                         <div class="car-details-container">
                             <div class="car-details">
                                 <div class="car-detail-item">
                                     <span>Категорія:</span>
-                                    <span><?php echo $car['category']; ?></span>
+                                    <span><?php echo htmlspecialchars($car['category']); ?></span>
                                 </div>
                                 <div class="car-detail-item">
                                     <span>Колір:</span>
-                                    <span><?php echo $car['color']; ?></span>
+                                    <span><?php echo htmlspecialchars($car['color']); ?></span>
                                 </div>
                                 <div class="car-detail-item">
                                     <span>Ціна за годину:</span>
-                                    <span><?php echo $car['price_per_hour']; ?> грн</span>
+                                    <span><?php echo htmlspecialchars($car['price_per_hour']); ?> грн</span>
                                 </div>
                                 <div class="car-detail-item">
                                     <span>Тип:</span>
-                                    <span><?php echo $car['make']; ?></span>
+                                    <span><?php echo htmlspecialchars($car['make']); ?></span>
                                 </div>
                                 <div class="car-detail-item">
                                     <span>Марка і модель:</span>
-                                    <span><?php echo $car['make']; ?> <?php echo $car['model']; ?></span>
+                                    <span><?php echo htmlspecialchars($car['make']); ?> <?php echo htmlspecialchars($car['model']); ?></span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="elem__button">
-                        <form method="POST">
-                            <button type="submit" class="elem__button__elements" name="rent">
-                                Орендувати
-                            </button>
-                            <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
-                        </form>
+                    
+                    <form method="POST" action="bookingOpen.php">
+                <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
+                <button type="submit" class="elem__button__elements">Бронювати</button>
+            </form>
                         <form method="POST">
                             <button type="submit" class="heart-button" name="favorite">
                                 <i class="fa-regular fa-heart"></i>

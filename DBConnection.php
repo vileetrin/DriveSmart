@@ -98,6 +98,32 @@ class DBConnection {
             echo "Помилка під час видалення автомобіля: " . $e->getMessage() . "<br>";
         }
     }
+    public function fetchCarById($car_id) {
+        try {
+            $sql = 'SELECT * FROM cars WHERE car_id = :car_id';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':car_id', $car_id);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Помилка під час отримання даних автомобіля: " . $e->getMessage() . "<br>";
+            return null;
+        }
+    }
+    
+    public function fetchUserById($user_id) {
+        try {
+            $sql = 'SELECT * FROM users WHERE user_id = :user_id';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->execute();
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo "Помилка під час отримання даних користувача: " . $e->getMessage() . "<br>";
+            return null;
+        }
+    }
+    
 }
 
 ?>

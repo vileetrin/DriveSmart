@@ -3,7 +3,7 @@ session_start();
 require_once 'DBConnection.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: loginOpen.php');
+    header('Location: ../loginOpen.php');
     exit();
 }
 

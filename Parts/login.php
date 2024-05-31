@@ -24,7 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
+            // Set session variables
             $_SESSION['user_id'] = $user['user_id'];
+            $_SESSION['user_role'] = $user['role']; // Assuming your database has a 'role' column
             header("Location: ../accountOpen.php");
             exit();
         } else {
@@ -35,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php else: ?>
                 <div id="error" class="error"></div>
             <?php endif; ?>
-            <form action="" method="POST">
+            <form action="" method="POST" onsubmit="return validateForm()">
                 <div class="form-group">
                     <label for="login">Введіть логін</label>
                     <input type="text" name="login" id="login" required>

@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+    header('Location: ../loginOpen.php');
     exit();
 }
 
@@ -26,7 +26,7 @@ if (isset($_POST['delete'])) {
     $delete_stmt->bindParam(':user_id', $user_id);
     $delete_stmt->bindParam(':car_id', $car_id);
     $delete_stmt->execute();
-    
+
     exit();
 }
 ?>

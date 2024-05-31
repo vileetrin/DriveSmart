@@ -36,20 +36,16 @@
 
     class BookingPage extends Page 
     {
-        public $carId;
-        public $car;
 
-        public function __construct($car)
+        public function __construct()
         {
             require_once 'Class/cars.php';
-            $this->car = $car;
             $this->title = "Бронювання Автомобіля";
         }
     
         public function ShowContent()
         {
             include "Parts/booking.php";
-            session_start();
         }  
     }
 
