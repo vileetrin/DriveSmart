@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user) {
             // Set session variables
             $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['user_role'] = $user['role']; // Assuming your database has a 'role' column
+            $_SESSION['user_role'] = $user['role']; 
             header("Location: ../accountOpen.php");
             exit();
         } else {
@@ -65,10 +65,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             return true;
         }
+        
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId      : '1372081633568837',
+            cookie     : true,
+            xfbml      : true,
+            version    : 'v18.0'
+            });
+            
+            FB.AppEvents.logPageView();   
+            
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
     </script>
 </head>
 <body>
-
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/uk_UA/sdk.js#xfbml=1&version=v20.0&appId=1372081633568837" nonce="wZPFmw0m"></script>
     <div class="auth-container">
         <div class="form-container">
             <h1>Авторизація</h1>
@@ -95,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <span>Або увійти через</span>
                     <div class="line"></div>
                 </div>
-                <button class="social-btn facebook">
+                <button class="social-btn facebook" onclick="window.location.href='../facebook-oauth.php'">
                     <img src="../img/entypo-social_facebook.png" alt="Facebook Icon" class="social-icon"> Увійти за допомогою Facebook
                 </button>
                 <button class="social-btn google">

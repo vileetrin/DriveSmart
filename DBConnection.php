@@ -62,6 +62,7 @@ class DBConnection {
             echo "Помилка під час отримання користувачів: " . $e->getMessage() . "<br>";
             return [];
         }
+        
     }
 
     public function fetchAllCars() {
@@ -123,7 +124,27 @@ class DBConnection {
             return null;
         }
     }
-    
+
+    public function updateUser($user_id, $first_name, $last_name, $email, $login, $role) {
+        $stmt = $this->pdo->prepare('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, login = :login, role = :role  WHERE user_id = :user_id');
+        $stmt->execute([
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'email' => $email,
+            'login' => $login,
+            'role' => $role,
+            'user_id' => $user_id,
+        ]);
+    }
+    public function sortAllUsers($sort_by = 'user_id', $order = 'ASC') {
+        $valid_columns = ['user_id', 'first_name', 'last_name', 'email', 'login', 'role'];
+        if (!in_array($sort_by, $valid_columns)) {
+            $sort_by = 'user_id';
+        }
+        $sql = "SELECT * FROM users ORDER BY $sort_by $order";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
+    }
 }
 
 ?>

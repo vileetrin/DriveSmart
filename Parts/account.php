@@ -2,29 +2,37 @@
 session_start();
 require_once 'DBConnection.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../loginOpen.php');
-    exit();
-}
-
-$user_id = $_SESSION['user_id'];
-
-$db = new DBConnection();
-$pdo = $db->getPdo();
-
-// Включення всіх помилок і попереджень для відладки
+// Enable all errors and warnings for debugging
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Обробка виходу з акаунта
+// Check if the user is logged in through Facebook
+$facebook_loggedin = isset($_SESSION['facebook_loggedin']) ? $_SESSION['facebook_loggedin'] : false;
+$facebook_email = isset($_SESSION['facebook_email']) ? $_SESSION['facebook_email'] : '';
+$facebook_name = isset($_SESSION['facebook_name']) ? $_SESSION['facebook_name'] : '';
+$facebook_picture = isset($_SESSION['facebook_picture']) ? $_SESSION['facebook_picture'] : '';
+
+// Check if the user is logged in through Google
+$google_loggedin = isset($_SESSION['google_loggedin']) ? $_SESSION['google_loggedin'] : false;
+$google_email = isset($_SESSION['google_email']) ? $_SESSION['google_email'] : '';
+$google_name = isset($_SESSION['google_name']) ? $_SESSION['google_name'] : '';
+$google_picture = isset($_SESSION['google_picture']) ? $_SESSION['google_picture'] : '';
+
+// Check if the user is logged in internally
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+$db = new DBConnection();
+$pdo = $db->getPdo();
+
+// Handle logout
 if (isset($_POST['logout'])) {
     session_destroy();
     header('Location: loginOpen.php');
     exit();
 }
 
-// Обробка видалення акаунта
+// Handle account deletion
 if (isset($_POST['delete_account'])) {
     $db->deleteUser($user_id);
     session_destroy();
@@ -32,29 +40,40 @@ if (isset($_POST['delete_account'])) {
     exit();
 }
 
-try {
-    $sql = "SELECT first_name, last_name, email, login, image FROM users WHERE user_id = :user_id";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindParam(':user_id', $user_id);
-    $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+$user = null;
+if ($user_id) {
+    try {
+        $sql = "SELECT first_name, last_name, email, login, image FROM users WHERE user_id = :user_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (!$user) {
-        echo "User not found.";
+        if (!$user) {
+            echo "User not found.";
+            exit();
+        }
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
         exit();
     }
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();
-    exit();
+} elseif ($facebook_loggedin || $google_loggedin) {
+    $user = [
+        'first_name' => $facebook_loggedin ? $facebook_name : $google_name,
+        'last_name' => '',
+        'email' => $facebook_loggedin ? $facebook_email : $google_email,
+        'login' => '',
+        'image' => $facebook_loggedin ? $facebook_picture : $google_picture,
+    ];
 }
 
-// Перевірка існування директорії 'uploads'
+// Check for 'uploads' directory
 if (!is_dir('uploads')) {
-    mkdir('uploads', 0777, true); // Створення директорії з правами на запис
+    mkdir('uploads', 0777, true); // Create directory with write permissions
 }
 
-// Завантаження нового зображення
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Handle new image upload
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $user_id) {
     if (isset($_FILES['image'])) {
         $uploadDir = 'uploads/';
         $uploadFile = $uploadDir . basename($_FILES['image']['name']);
@@ -65,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindParam(':image', $uploadFile);
                 $stmt->bindParam(':user_id', $user_id);
                 $stmt->execute();
-                // Оновлення профілю користувача
+                // Update user profile
                 $user['image'] = $uploadFile;
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
@@ -87,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':user_id', $user_id);
             $stmt->execute();
 
-            // Оновлення профілю користувача
+            // Update user profile
             $user['first_name'] = $_POST['first_name'];
             $user['last_name'] = $_POST['last_name'];
             $user['email'] = $_POST['email'];
@@ -99,8 +118,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Шлях до зображення профілю
-$profileImage = (!empty($user['image']) && $user['image'] !== NULL) ? $user['image'] : '../img/default-profile-picture.jpg';
+// Profile image path
+$profileImage = (!empty($user['image']) && $user['image'] !== NULL) ? $user['image'] : '../img/default-user-profile.jpg';
 ?>
 
 <!DOCTYPE html>
@@ -137,8 +156,9 @@ $profileImage = (!empty($user['image']) && $user['image'] !== NULL) ? $user['ima
                     <p><?php echo htmlspecialchars($user['email']); ?></p>
                     <p><?php echo htmlspecialchars($user['login']); ?></p>
                     <button class="profile-card-button" onclick="toggleEditMode()">Змінити</button>
-                       <div class="social-divider">
-                    <div class="line"></div></div>
+                    <div class="social-divider">
+                        <div class="line"></div>
+                    </div>
                     <div class="logout">
                         <form action="" method="post">
                             <button class="logout-button" type="submit" name="logout">Вийти</button>

@@ -128,3 +128,20 @@
         }
     }  
 }
+    
+    class CustomerCRUDPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Управління користувачами";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/customerCRUD.php";
+        }  
+    }
+
+

@@ -22,7 +22,7 @@ $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
             <nav class="main-nav">
                 <ul class="main-nav-list">
                     <?php if ($isAdmin): ?>
-                        <li class="main-nav-list-item"><a href="#" class="main-nav-link">Користувачі</a></li>
+                        <li class="main-nav-list-item"><a href="../customerCRUDOpen.php" class="main-nav-link">Користувачі</a></li>
                         <li class="main-nav-list-item"><a href="#" class="main-nav-link">Автомобілі</a></li>
                         <li class="main-nav-list-item"><a href="#" class="main-nav-link">Статистика</a></li>
                         <li class="main-nav-list-item"><a href="#" class="main-nav-link">Маршрути</a></li>
