@@ -143,5 +143,20 @@
             include "Parts/customerCRUD.php";
         }  
     }
+    class CarCRUDPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Управління автомобілями";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/carCRUD.php";
+        }  
+    }
+?>
 
 

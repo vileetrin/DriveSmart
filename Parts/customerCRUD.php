@@ -14,14 +14,28 @@ $order = isset($_GET['order']) ? $_GET['order'] : 'ASC';
 $users = $database->sortAllUsers($sort_by, $order);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $imagePath = '';
+
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = 'uploads/';
+        $uploadFile = $uploadDir . basename($_FILES['image']['name']);
+
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
+            $imagePath = $uploadFile;
+        } else {
+            echo "Failed to upload image.";
+        }
+    }
+
     if (isset($_POST['block'])) {
         $database->blockUser($_POST['user_id']);
     } elseif (isset($_POST['delete'])) {
         $database->deleteUser($_POST['user_id']);
     } elseif (isset($_POST['update'])) {
-        $database->updateUser($_POST['user_id'], $_POST['first_name'], $_POST['last_name'], $_POST['email'],$_POST['login'], $_POST['role']);
+        $imagePath = !empty($imagePath) ? $imagePath : $_POST['existing_image'];
+        $database->updateUser($_POST['user_id'], $_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['login'], $_POST['role'], $imagePath);
     } elseif (isset($_POST['add'])) {
-        $database->addUser($_POST['first_name'], $_POST['last_name'], $_POST['email'],$_POST['login'],$_POST['password'], $_POST['role']);
+        $database->addUser($_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['login'], $_POST['password'], $_POST['role'], $imagePath);
     }
     header('Location: ../customerCRUDOpen.php');
     exit();
@@ -55,47 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button class="addbtn" onclick="toggleAddUser()">+</button>
         </div>
-        <div class="selected-cars" id="user-list">
-            <?php foreach ($users as $user): ?>
-
-                <div class="car-block user-card">
-                <form method="post" class="car-info">
-                    <img src="<?php echo htmlspecialchars($user['image'] ?? '../img/default-user-profile.jpg'); ?>" alt="User Avatar">
-                    <div class="details">
-                        <h4>Особисті дані</h4>
-                        <div class="info-row">
-                            <span class="label">Ім'я:</span>
-                            <input type="text" name="first_name" class="value" value="<?php echo htmlspecialchars($user['first_name']); ?>">
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Прізвище:</span>
-                            <input type="text" name="last_name" class="value" value="<?php echo htmlspecialchars($user['last_name']); ?>">
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Електронна пошта:</span>
-                            <input type="text" name="email" class="value" value="<?php echo htmlspecialchars($user['email']); ?>">
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Логін:</span>
-                            <input type="text" name="login" class="value" value="<?php echo htmlspecialchars($user['login']); ?>">
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Роль:</span>
-                            <input type="text" name="role" class="value" value="<?php echo htmlspecialchars($user['role']); ?>">
-                        </div>
-                        <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
-                    </div>
-                    <div class="actions">
-                        <h4>Дії</h4>
-                        <button type="submit" name="update" class="book-button">Редагувати</button>
-                        <button type="submit" name="block" class="book-button">Заблокувати</button>
-                        <button type="submit" name="delete" class="delete-button">Видалити</button>
-                    </div>
-                </form>
-            </div>
-            <?php endforeach; ?>
-            <div class="car-block user-card hidden" id="add-user-card">
-                <form method="post" class="car-info">
+        <div class="car-block user-card hidden" id="add-user-card">
+                <form method="post" enctype="multipart/form-data" class="car-info">
                     <img src="../img/default-user-profile.jpg" alt="User Avatar">
                     <div class="details">
                         <h4>Додати користувача</h4>
@@ -123,6 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="label">Роль:</span>
                             <input type="text" name="role" class="value" value="">
                         </div>
+                        <div class="info-row">
+                            <span class="label">Зображення:</span>
+                            <input type="file" name="image" class="value">
+                        </div>
                     </div>
                     <div class="actions">
                         <h4>Дії</h4>
@@ -131,6 +110,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </form>
             </div>
+        <div class="selected-cars" id="user-list">
+            <?php foreach ($users as $user): ?>
+
+                <div class="car-block user-card">
+                <form method="post" enctype="multipart/form-data" class="car-info">
+                    <img src="<?php echo htmlspecialchars($user['image'] ?? '../img/default-user-profile.jpg'); ?>" alt="User Avatar">
+                    <div class="details">
+                        <h4>Особисті дані</h4>
+                        <div class="info-row">
+                            <span class="label">Ім'я:</span>
+                            <input type="text" name="first_name" class="value" value="<?php echo htmlspecialchars($user['first_name']); ?>">
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Прізвище:</span>
+                            <input type="text" name="last_name" class="value" value="<?php echo htmlspecialchars($user['last_name']); ?>">
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Електронна пошта:</span>
+                            <input type="text" name="email" class="value" value="<?php echo htmlspecialchars($user['email']); ?>">
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Логін:</span>
+                            <input type="text" name="login" class="value" value="<?php echo htmlspecialchars($user['login']); ?>">
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Роль:</span>
+                            <input type="text" name="role" class="value" value="<?php echo htmlspecialchars($user['role']); ?>">
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Зображення:</span>
+                            <input type="file" name="image" class="value">
+                            <input type="hidden" name="existing_image" value="<?php echo htmlspecialchars($user['image']); ?>">
+                        </div>
+                        <input type="hidden" name="user_id" value="<?php echo $user['user_id']; ?>">
+                    </div>
+                    <div class="actions">
+                        <h4>Дії</h4>
+                        <button type="submit" name="update" class="book-button">Редагувати</button>
+                        <button type="submit" name="block" class="book-button">Заблокувати</button>
+                        <button type="submit" name="delete" class="delete-button">Видалити</button>
+                    </div>
+                </form>
+            </div>
+            <?php endforeach; ?>
         </div>
     </div>
     <script>

@@ -64,6 +64,13 @@
 .user-card.visible {
     display: flex;
 }
+.car-card.hidden {
+    display: none;
+}
+
+.car-card.visible {
+    display: flex;
+}
        /* Dropdown Button */
        .dropbtn {
         background-color: #f60;

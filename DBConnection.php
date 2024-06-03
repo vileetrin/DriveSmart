@@ -21,7 +21,7 @@ class DBConnection {
     }
     public function addUser($firstName, $lastName, $login, $email, $password, $role) {
         try {
-            $sql = 'INSERT INTO users (first_name, last_name, login, email, password, role) VALUES (:firstName, :lastName, :login, :email, :password, :role)';
+            $sql = 'INSERT INTO users (first_name, last_name, email, login, password, role, image) VALUES (:first_name, :last_name, :email, :login, :password, :role, :image)';
             $stmt = $this->pdo->prepare($sql);
             $stmt->bindParam(':firstName', $firstName);
             $stmt->bindParam(':lastName', $lastName);
@@ -29,6 +29,7 @@ class DBConnection {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $password);
             $stmt->bindParam(':role', $role);
+            $stmt->bindParam(':image', $image);
             $stmt->execute();
             echo "Користувача успішно додано.<br>";
         } catch (PDOException $e) {
@@ -125,15 +126,28 @@ class DBConnection {
         }
     }
 
-    public function updateUser($user_id, $first_name, $last_name, $email, $login, $role) {
-        $stmt = $this->pdo->prepare('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, login = :login, role = :role  WHERE user_id = :user_id');
+    public function updateUser($user_id, $first_name, $last_name, $email, $login, $role, $image) {
+        $stmt = $this->pdo->prepare('UPDATE users SET first_name = :first_name, last_name = :last_name, email = :email, login = :login, role = :role, image = :image WHERE user_id = :user_id');
         $stmt->execute([
             'first_name' => $first_name,
             'last_name' => $last_name,
             'email' => $email,
             'login' => $login,
             'role' => $role,
+            'image' => $image,
             'user_id' => $user_id,
+        ]);
+    }    
+    public function updateCar($car_id, $make, $model, $category, $color, $image, $price_per_hour) {
+        $stmt = $this->pdo->prepare('UPDATE cars SET make = :make, model = :model, category = :category, color = :color, image = :image, price_per_hour = :price_per_hour  WHERE car_id = :car_id');
+        $stmt->execute([
+            'make' => $make,
+            'model' => $model,
+            'category' => $category,
+            'color' => $color,
+            'image' => $image,
+            'price_per_hour' => $price_per_hour,
+            'car_id' => $car_id,
         ]);
     }
     public function sortAllUsers($sort_by = 'user_id', $order = 'ASC') {
@@ -142,6 +156,15 @@ class DBConnection {
             $sort_by = 'user_id';
         }
         $sql = "SELECT * FROM users ORDER BY $sort_by $order";
+        $stmt = $this->pdo->query($sql);
+        return $stmt->fetchAll();
+    }
+    public function sortAllCars($sort_by = 'car_id', $order = 'ASC') {
+        $valid_columns = ['car_id', 'make', 'model', 'category', 'color', 'price_per_hour'];
+        if (!in_array($sort_by, $valid_columns)) {
+            $sort_by = 'car_id';
+        }
+        $sql = "SELECT * FROM cars ORDER BY $sort_by $order";
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
