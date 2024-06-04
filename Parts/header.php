@@ -3,7 +3,7 @@ session_start();
 require_once 'DBConnection.php';
 
 // Перевірка, чи користувач авторизований
-$isLoggedIn = isset($_SESSION['user_id']);
+$isLoggedIn = isset($_SESSION['user_id']) || isset($_SESSION['facebook_loggedin']);
 $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
 ?>
 
@@ -24,12 +24,12 @@ $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
                     <?php if ($isAdmin): ?>
                         <li class="main-nav-list-item"><a href="../customerCRUDOpen.php" class="main-nav-link">Користувачі</a></li>
                         <li class="main-nav-list-item"><a href="../carCRUDOpen.php" class="main-nav-link">Автомобілі</a></li>
-                        <li class="main-nav-list-item"><a href="#" class="main-nav-link">Статистика</a></li>
+                        <li class="main-nav-list-item"><a href="../statsOpen.php" class="main-nav-link">Статистика</a></li>
                         <li class="main-nav-list-item"><a href="#" class="main-nav-link">Маршрути</a></li>
                     <?php else: ?>
                         <li class="main-nav-list-item"><a href="./catalogOpen.php" class="main-nav-link">Пропозиції</a></li>
                         <li class="main-nav-list-item"><a href="./page-3.html" class="main-nav-link">Мапа</a></li>
-                        <li class="main-nav-list-item"><a href="../accountOpen.php" class="main-nav-link">Форум</a></li>
+                        <li class="main-nav-list-item"><a href="../forumOpen.php" class="main-nav-link">Форум</a></li>
                         <li><button type="button" class="header-btn">Завантажити додаток</button></li>
                     <?php endif; ?>
                     <li class="main-nav-list-item">

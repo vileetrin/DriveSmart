@@ -2,20 +2,49 @@
 session_start();
 require_once 'DBConnection.php';
 
-
-if (!isset($_SESSION['user_id'])) {
+if (! isset($_SESSION['user_id'])) {
     header('Location: ../loginOpen.php');
     exit();
 }
 
 $database = new DBConnection();
+$car = null;
+$user = null;
+$amount = 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $car_id = intval($_POST['car_id']);
-    $user_id = $_SESSION['user_id'];
+    if (isset($_POST['car_id'])) {
+        $car_id = intval($_POST['car_id']);
+        $user_id = $_SESSION['user_id'];
 
-    $car = $database->fetchCarById($car_id);
-    $user = $database->fetchUserById($user_id);
+        // Fetch car and user details
+        $car = $database->fetchCarById($car_id);
+        $user = $database->fetchUserById($user_id);
+
+        if (isset($_POST['start_date']) && isset($_POST['end_date'])) {
+            $start_date = $_POST['start_date'];
+            $end_date = $_POST['end_date'];
+
+            // Calculate the total amount
+            $price_per_hour = $car['price_per_hour'];
+            $start_time = strtotime($start_date);
+            $end_time = strtotime($end_date);
+            $duration_in_hours = ($end_time - $start_time) / 3600;
+            $amount = $price_per_hour * $duration_in_hours;
+
+            // Save the booking in the database
+            $database->addReservation($user_id, $car_id, $start_date, $end_date, $amount);
+
+            // Redirect to payment page with booking details
+            $_SESSION['amount'] = $amount;
+            $_SESSION['car_id'] = $car_id;
+            $_SESSION['start_date'] = $start_date;
+            $_SESSION['end_date'] = $end_date;
+
+            header('Location:../paymentOpen.php');
+            exit();
+        }
+    }
 }
 ?>
 
@@ -56,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <hr>
                 <div class="booking-form">
-                    <form action="process_booking.php" method="post">
+                    <form action="" method="post">
                         <h2>Обeріть Дату та Час</h2>
                         <label for="start_date">Дата бронювання з:</label>
                         <input type="datetime-local" id="start_date" name="start_date" required>

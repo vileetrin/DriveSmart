@@ -3,10 +3,6 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: ../loginOpen.php');
-    exit();
-}
 
 require_once 'DBConnection.php';
 
@@ -81,7 +77,7 @@ if (isset($_POST['delete'])) {
             <?php 
                 }
             } else {
-                echo "<div class='no-cars-card'><img src='img/car.png' alt='car icon'><p>Ви не обрали жодного автомобіля.</p><a href='index.php'>Повернутися до каталогу</a></div>";
+                echo "<div class='no-cars-card'><img src='img/car.png' alt='car icon'><p>Ви не обрали жодного автомобіля.</p><a href='catalogOpen.php'>Повернутися до каталогу</a></div>";
             }
             ?>
         </div>

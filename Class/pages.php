@@ -157,6 +157,64 @@
             include "Parts/carCRUD.php";
         }  
     }
+    class StatsPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Статистика";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/stats.php";
+        }  
+    }
+    class PaymentPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Оплата";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/payment.php";
+        }  
+    }
+
+    class SuccessPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Оплата";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/success.php";
+        }  
+    }
+
+    class ForumPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Оплата";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/forum.php";
+        }  
+    }
 ?>
 
 

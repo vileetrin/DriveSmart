@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $login = $_POST['login'];
     $password = $_POST['password'];
-    $role = 'User'; // Роль за замовчуванням
+    $role = 'user'; // Роль за замовчуванням
 
     $db = new DBConnection();
     $pdo = $db->getPdo();
@@ -85,12 +85,6 @@ if (isset($_POST['delete_account'])) {
                 <div class="social-divider">
                     <div class="line"></div>
                 </div>
-                <button class="social-btn facebook">
-                    <img src="../img/entypo-social_facebook.png" alt="Facebook Icon" class="social-icon"> Увійти за допомогою Facebook
-                </button>
-                <button class="social-btn google">
-                    <img src="../img/flat-color-icons_google.png" alt="Google Icon" class="social-icon"> Увійти за допомогою Google
-                </button>
             </div>
         </div>
     </div>

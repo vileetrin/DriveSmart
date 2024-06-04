@@ -2,14 +2,24 @@
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+date_default_timezone_set('UTC');
 
 require_once 'DBConnection.php';
 
 $database = new DBConnection();
 $cars = $database->fetchAllCars();
+$database->getPDO()->exec("SET time_zone = '+03:00';");
+
+function isCarBooked($car_id, $database) {
+    $stmt = $database->getPDO()->prepare('SELECT COUNT(*) FROM reservations WHERE car_id = :car_id AND NOW() BETWEEN start_time AND end_time');
+    $stmt->bindParam(':car_id', $car_id);
+    $stmt->execute();
+    return $stmt->fetchColumn() > 0;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['favorite']) && isset($_SESSION['user_id'])) {
+    if (isset($_POST['favorite']) && ((isset($_SESSION['user_id']))) )
+     {
         $car_id = intval($_POST['car_id']);
         $user_id = $_SESSION['user_id'];
 
@@ -26,18 +36,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':car_id', $car_id);
             $stmt->execute();
+        } else {
+            // Remove the car from the favorites list
+            $stmt = $database->getPDO()->prepare('DELETE FROM favorites WHERE user_id = :user_id AND car_id = :car_id');
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':car_id', $car_id);
+            $stmt->execute();
         }
-    }
 
-    
-    
+        // Redirect to the same page to refresh the content
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
 }
 
-function filterCars($cars, $minPrice, $maxPrice, $brand, $category) {
-    return array_filter($cars, function ($car) use ($minPrice, $maxPrice, $brand, $category) {
+function filterCars($cars, $minPrice, $maxPrice, $brand, $category, $database) {
+    return array_filter($cars, function ($car) use ($minPrice, $maxPrice, $brand, $category, $database) {
         return ($car['price_per_hour'] >= $minPrice && $car['price_per_hour'] <= $maxPrice) &&
                ($brand === "" || $car['make'] === $brand) &&
-               ($category === "" || $car['category'] === $category);
+               ($category === "" || $car['category'] === $category) &&
+               !isCarBooked($car['car_id'], $database);
     });
 }
 
@@ -47,7 +65,7 @@ $brand = isset($_POST['brand']) ? $_POST['brand'] : "";
 $category = isset($_POST['category']) ? $_POST['category'] : "";
 
 if (isset($_POST['filter'])) {
-    $cars = filterCars($cars, $minPrice, $maxPrice, $brand, $category);
+    $cars = filterCars($cars, $minPrice, $maxPrice, $brand, $category, $database);
 }
 ?>
 
@@ -105,6 +123,12 @@ if (isset($_POST['filter'])) {
         <div class="content__body__elem">
             <?php
             foreach ($cars as $car) {
+                // Check if the car is in the favorites list
+                $stmt = $database->getPDO()->prepare('SELECT COUNT(*) FROM favorites WHERE user_id = :user_id AND car_id = :car_id');
+                $stmt->bindParam(':user_id', $_SESSION['user_id']);
+                $stmt->bindParam(':car_id', $car['car_id']);
+                $stmt->execute();
+                $isFavorite = $stmt->fetchColumn() > 0;
             ?>
                 <div class="body__elem">
                     <div class="elem__img">
@@ -138,14 +162,17 @@ if (isset($_POST['filter'])) {
                         </div>
                     </div>
                     <div class="elem__button">
-                    
-                    <form method="POST" action="bookingOpen.php">
-                <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
-                <button type="submit" class="elem__button__elements">Бронювати</button>
-            </form>
+                        <?php if (!isCarBooked($car['car_id'], $database)) { ?>
+                            <form method="POST" action="bookingOpen.php">
+                                <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
+                                <button type="submit" class="elem__button__elements">Бронювати</button>
+                            </form>
+                        <?php } else { ?>
+                            <button class="elem__button__elements" disabled>Недоступний</button>
+                        <?php } ?>
                         <form method="POST">
                             <button type="submit" class="heart-button" name="favorite">
-                                <i class="fa-regular fa-heart"></i>
+                                <i class="fa-<?php echo $isFavorite ? 'solid' : 'regular'; ?> fa-heart"></i>
                             </button>
                             <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
                         </form>

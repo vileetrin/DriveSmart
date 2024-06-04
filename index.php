@@ -6,4 +6,4 @@
     $bar->ShowHeader();
     $bar->ShowContent();
     $bar->ShowFooter();
-?>
+?> 

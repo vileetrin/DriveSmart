@@ -3,9 +3,9 @@ class DBConnection {
     private $pdo;
 
     public function __construct() {
-        $dsn = 'mysql:host=sql104.infinityfree.com;dbname=if0_36638872_drivesmartdb;port=3306';
-        $user = 'if0_36638872';
-        $password = 'XhxIwJi7YSkZTs3';
+        $dsn = 'mysql:host=sql210.infinityfree.com;dbname=if0_36672875_drivesmart;port=3306';
+        $user = 'if0_36672875';
+        $password = 'TqffyiPfBbVtpS';
 
         try {
             $this->pdo = new PDO($dsn, $user, $password);
@@ -168,6 +168,77 @@ class DBConnection {
         $stmt = $this->pdo->query($sql);
         return $stmt->fetchAll();
     }
+    public function getTotalUsers() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) AS total_users FROM users");
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total_users'];
+    }
+
+    public function getActiveUsers($startDate, $endDate) {
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS active_users FROM users WHERE last_active BETWEEN :start_date AND :end_date");
+        $stmt->execute(['start_date' => $startDate, 'end_date' => $endDate]);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['active_users'];
+    }
+
+    public function getTotalRentedCars() {
+        $stmt = $this->pdo->query("SELECT COUNT(DISTINCT car_id) AS total_rented_cars FROM rentals");
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total_rented_cars'];
+    }
+
+    public function getTotalCars() {
+        $stmt = $this->pdo->query("SELECT COUNT(*) AS total_cars FROM cars");
+        return $stmt->fetch(PDO::FETCH_ASSOC)['total_cars'];
+    }
+
+    public function getAvgUsageTime($model) {
+        $stmt = $this->pdo->prepare("SELECT AVG(TIMESTAMPDIFF(MINUTE, rental_start, rental_end)) AS avg_usage_time FROM rentals 
+                                     JOIN cars ON rentals.car_id = cars.id 
+                                     WHERE CONCAT(cars.make, ' ', cars.model) = :model");
+        $stmt->execute(['model' => $model]);
+        return $stmt->fetch(PDO::FETCH_ASSOC)['avg_usage_time'];
+    }
+
+    public function getPopularCar() {
+        $stmt = $this->pdo->query("SELECT CONCAT(cars.make, ' ', cars.model) AS popular_car, COUNT(*) AS count 
+                                   FROM rentals 
+                                   JOIN cars ON rentals.car_id = cars.id 
+                                   GROUP BY popular_car 
+                                   ORDER BY count DESC 
+                                   LIMIT 1");
+        return $stmt->fetch(PDO::FETCH_ASSOC)['popular_car'];
+    }
+
+    public function getCarModels() {
+        $stmt = $this->pdo->query("SELECT DISTINCT CONCAT(make, ' ', model) AS car_model FROM cars");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+public function addReservation($user_id, $car_id, $start_time, $end_time, $amount) {
+    $stmt = $this->pdo->prepare("INSERT INTO reservations (user_id, car_id, start_time, end_time, status, amount) VALUES (:user_id, :car_id, :start_time, :end_time, 'booked', :amount)");
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':car_id', $car_id);
+    $stmt->bindParam(':start_time', $start_time);
+    $stmt->bindParam(':end_time', $end_time);
+    $stmt->bindParam(':amount', $amount);
+    $stmt->execute();
+}
+
+public function addPayment($user_id, $amount, $status) {
+    $stmt = $this->pdo->prepare("INSERT INTO payments (user_id, amount, payment_datetime, status) VALUES (:user_id, :amount, NOW(), :status)");
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':amount', $amount);
+    $stmt->bindParam(':status', $status);
+    $stmt->execute();
+}
+public function updateReservationStatus($user_id, $car_id, $start_time, $end_time, $status) {
+    $stmt = $this->pdo->prepare("UPDATE reservations SET status = :status WHERE user_id = :user_id AND car_id = :car_id AND start_time = :start_time AND end_time = :end_time");
+    $stmt->bindParam(':status', $status);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':car_id', $car_id);
+    $stmt->bindParam(':start_time', $start_time);
+    $stmt->bindParam(':end_time', $end_time);
+    $stmt->execute();
+}
+    
 }
 
 ?>
