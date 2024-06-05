@@ -215,6 +215,21 @@
             include "Parts/forum.php";
         }  
     }
+
+    class MapPage extends Page 
+{
+    public function __construct()
+    {
+        $this->title = "Карта";
+        require_once 'Class/cars.php';
+        session_start();
+    }
+
+    public function ShowContent()
+    {
+        include "Parts/map.php"; 
+    }
+}
 ?>
 
 
