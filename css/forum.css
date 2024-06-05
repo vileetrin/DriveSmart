@@ -60,13 +60,13 @@ h1 {
     color: #999;
 }
 
-form {
+.formforum {
     display: flex;
     flex-direction: column;
     align-items: stretch;
 }
 
-form textarea {
+.formforum textarea {
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -74,14 +74,14 @@ form textarea {
     resize: none;
 }
 
-form select {
+.formforum select {
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-form button {
+.formforum button {
     padding: 10px;
     background-color: #213460;
     color: #fff;
@@ -90,6 +90,6 @@ form button {
     cursor: pointer;
 }
 
-form button:hover {
+.formforum button:hover {
     background-color: #155ab6;
 }

@@ -45,7 +45,7 @@ $messages = $pdo->query("SELECT f.*, u.login AS username FROM forum f JOIN users
                 </div>
             <?php endforeach; ?>
         </div>
-        <form id="chat-form">
+        <form class="formforum" id="chat-form">
             <input type="hidden" id="user_id" value="1"> <!-- Change this as per your user management system -->
             <textarea id="review_text" placeholder="Повідомлення" required></textarea>
             <select id="rating" required>
