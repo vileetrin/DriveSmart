@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F4F2EF;
+    color: #213460;
+    margin: 0;
+    padding: 0;
+}
+
+.statistics-container {
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #213460;
+}
+
+.section {
+    background-color: #D8D1BD;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 1.8em;
+    color: #E68C3A;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.stat-item span.label {
+    flex: 1;
+    font-size: 1.2em;
+    color: #213460;
+}
+
+.stat-item span.value {
+    font-size: 1.2em;
+    color: #213460;
+    margin-left: 10px;
+}
+
+.stat-item i {
+    font-size: 1.5em;
+    margin-left: 10px;
+    color: #213460;
+}
+
+.forma {
+    display: flex;
+    align-items: center;
+}
+
+.forma label {
+    margin-right: 10px;
+}
+
+.forma input[type="date"],
+.forma select {
+    padding: 5px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.forma button {
+    padding: 5px 10px;
+    background-color: #213460;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.forma button:hover {
+    background-color: #16356e;
+}

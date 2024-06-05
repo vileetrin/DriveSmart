@@ -1,0 +1,116 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F4F2EF;
+}
+
+.booking-container {
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+h1 {
+    text-align: center;
+    color: #00274d;
+    margin-bottom: 20px;
+}
+
+.booking-content {
+    display: flex;
+    flex-direction: row;
+    background-color: #D8D1BD;
+    padding: 20px;
+    border-radius: 40px;
+    width:1300px;
+    height: 800px;
+}
+
+.car-image img {
+    width: 100%;
+    max-width: 500px;
+    height: 500px;
+    border-radius: 10px;
+    object-fit: contain;
+  margin-right: 20px;
+}
+
+.booking-details {
+    margin: 20px;
+    flex: 1;
+}
+
+.car-inform {
+    margin-bottom: 20px;
+}
+
+.car-inform h2 {
+    margin-top: 0;
+    color: #00274d;
+    margin-bottom: 20px;
+}
+
+.car-info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.car-info-row .label {
+    font-weight: bold;
+    color: #00274d;
+}
+
+.car-info-row .value {
+    color: #000;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #000;
+    margin: 20px 0;
+}
+
+.booking-form h2 {
+    color: #00274d;
+    margin-bottom: 10px;
+}
+
+.booking-form label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.booking-form input[type="text"],
+.booking-form input[type="email"],
+.booking-form input[type="datetime-local"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.booking-form button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background-color: #e68c3a;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.booking-form button:hover {
+    background-color: #fff;
+    color:#213460;
+}

@@ -1,0 +1,230 @@
+/* Global styles */
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+html {
+  display: block;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  padding: 20px;
+  font-family: Montserrat, sans-serif;
+  background-color: #f4f2ef;
+  flex: 1;
+}
+
+.mainheading {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-family: "Montserrat", sans-serif;
+  background-color: #f4f2ef;
+  font-weight: lighter;
+}
+
+main {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+}
+
+.body__content {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background-color: #f4f2ef;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f2ef;
+  margin-bottom: 20px;
+}
+
+.filters__elem {
+  display: flex;
+  flex-direction: column;
+}
+
+.filters__elem .h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #0c1b52;
+}
+
+.filters__elem select,
+.filters__elem button,
+.filter__price__input {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #0c1b52;
+  border-radius: 25px;
+  background-color: #fff;
+  color: #2a2a2a;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.filters__elem select:hover,
+.filters__elem button:hover,
+.filter__price__input:hover {
+  background-color: #f0f0f0;
+  border-color: #aaa;
+}
+
+.filters__elem select:focus,
+.filters__elem button:focus,
+.filter__price__input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.content__body__elem {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Add media queries to adjust the number of columns based on screen size */
+@media (min-width: 1200px) {
+  .content__body__elem {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+  .content__body__elem {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+  .content__body__elem {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 599px) {
+  .content__body__elem {
+    grid-template-columns: 1fr;
+  }
+}
+
+.body__elem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border: 2px solid #0c1b52;
+  padding: 20px;
+}
+
+.elem__img {
+  text-align: center;
+}
+
+.elem__img img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.elem__text {
+  text-align: left;
+  font-size: 15px;
+  font-family: Montserrat, sans-serif;
+  padding: 10px 0;
+}
+
+.elem__text h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #0c1b52;
+}
+
+.elem__price {
+  text-align: center;
+  font-size: 20px;
+  font-family: Montserrat, sans-serif;
+  padding: 10px 0;
+}
+
+.elem__button {
+  display: flex;
+  align-self: center;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+.elem__button__elements {
+    width: 200px;
+  flex-grow: 1;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-family: Montserrat, sans-serif;
+  font-weight: normal;
+  color: #fff;
+  text-align: center;
+  background-color: #e68c3a;
+  border: 2px solid #e68c3a;
+  transition: color 0.4s ease, border-color 0.4s ease;
+  cursor: pointer;
+  margin-right: 10px; /* Add some space between the button and the heart icon */
+}
+
+.elem__button__elements:hover {
+  border-color: #a44f00;
+  color: #a44f00;
+}
+.heart-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    transition: color 0.3s ease;
+}
+
+.heart-button .fas {
+    pointer-events: none;
+}
+.heart-button.active {
+    color: #C50000;
+}
+
+
+.blue-line {
+  height: 2px;
+  background-color: #0c1b52;
+  margin-top: 0;
+}
+
+.car-details-container {
+  margin: 2px;
+  padding: 0px;
+  max-width: 300px;
+}
+.car-details {
+  display: flex;
+  flex-direction: column;
+}
+.car-detail-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
