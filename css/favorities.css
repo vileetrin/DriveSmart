@@ -64,7 +64,7 @@ body {
   margin-right: 20px;
   margin-left: 20px;
   border-radius: 10px;
-  border:#051035 1px solid;
+  border: #051035 1px solid;
 }
 
 .car-info .details {
@@ -105,7 +105,7 @@ body {
   align-items: flex-start;
   width: 19%;
   margin-left: 20px;
-  padding-left: 10px ;
+  padding-left: 10px;
 }
 
 .actions h4 {
@@ -184,4 +184,3 @@ body {
 .no-cars-card a:hover {
   background-color: #051035;
 }
-

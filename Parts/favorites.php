@@ -3,7 +3,6 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-
 require_once 'DBConnection.php';
 
 $database = new DBConnection();
@@ -71,7 +70,10 @@ if (isset($_POST['delete'])) {
                         <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
                         <button class="delete-button" type="submit" name="delete">Видалити</button>
                     </form>
-                    <button class="book-button">Забронювати</button>
+                    <form method="GET" action="bookingOpen.php">
+                        <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
+                        <button class="book-button" type="submit">Забронювати</button>
+                    </form>
                 </div>
             </div>
             <?php 
