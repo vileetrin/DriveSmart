@@ -2,7 +2,7 @@
 session_start();
 require_once 'DBConnection.php';
 
-if (! isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Location: ../loginOpen.php');
     exit();
 }
@@ -41,10 +41,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['start_date'] = $start_date;
             $_SESSION['end_date'] = $end_date;
 
-            header('Location:../paymentOpen.php');
+            header('Location: ../paymentOpen.php');
             exit();
         }
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['car_id'])) {
+    $car_id = intval($_GET['car_id']);
+    $user_id = $_SESSION['user_id'];
+
+    // Fetch car and user details
+    $car = $database->fetchCarById($car_id);
+    $user = $database->fetchUserById($user_id);
 }
 ?>
 
