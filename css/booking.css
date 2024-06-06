@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #F4F2EF;
+    flex:1;
 }
 
 .booking-container {
