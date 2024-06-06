@@ -249,6 +249,7 @@ public function updateReservationStatus($user_id, $car_id, $start_time, $end_tim
     $stmt->bindParam(':end_time', $end_time);
     $stmt->execute();
 }
+  
 public function fetchUserReservations($user_id) {
     $stmt = $this->pdo->prepare('
         SELECT reservations.*, cars.model, cars.make, cars.image 
@@ -271,6 +272,37 @@ public function getReservationById($user_id, $car_id, $start_date, $end_date, $a
     $stmt->bindParam(':amount', $amount);
     $stmt->execute();
 }
+  
+      // Функция для получения всех форумов
+    public function fetchAllForums() {
+        try {
+            $stmt = $this->pdo->query("SELECT * FROM forums");
+            $forums = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $forums;
+        } catch (PDOException $e) {
+            echo "Ошибка при получении форумов: " . $e->getMessage() . "<br>";
+            return [];
+        }
+    }
+
+    // Функция для получения сообщений из конкретного форума
+    public function fetchMessagesByForum($forum_id) {
+        try {
+            $sql = 'SELECT m.message_id, m.message_text, m.created_at, u.username 
+                    FROM messages m 
+                    JOIN users u ON m.user_id = u.user_id 
+                    WHERE m.forum_id = :forum_id 
+                    ORDER BY m.created_at ASC';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':forum_id', $forum_id);
+            $stmt->execute();
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $messages;
+        } catch (PDOException $e) {
+            echo "Ошибка при получении сообщений: " . $e->getMessage() . "<br>";
+            return [];
+        }
+    }
 
 }
 
