@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <span class="value" style="color: #E68C3A;"><?php echo number_format($amount, 2); ?> грн</span>
                 </div>
                 <div class="line-container"><h3>Оплата через Stripe</h3></div>
-                <form action="" method="post">
+                <form class = "payment-form" action="" method="post">
                     <button type="submit" class="stripe-button">Оплатити</button>
                 </form>
             </div>

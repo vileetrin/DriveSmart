@@ -24,17 +24,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user) {
-            // Update the last_active attribute
-            $updateSql = "UPDATE users SET last_active = NOW() WHERE user_id = :user_id";
-            $updateStmt = $pdo->prepare($updateSql);
-            $updateStmt->bindParam(':user_id', $user['user_id']);
-            $updateStmt->execute();
+            if ($user['blocked']) {
+                $error = "Your account is blocked. Please contact support.";
+            } else {
+                // Update the last_active attribute
+                $updateSql = "UPDATE users SET last_active = NOW() WHERE user_id = :user_id";
+                $updateStmt = $pdo->prepare($updateSql);
+                $updateStmt->bindParam(':user_id', $user['user_id']);
+                $updateStmt->execute();
 
-            // Set session variables
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['user_role'] = $user['role']; 
-            header("Location: ../accountOpen.php");
-            exit();
+                // Set session variables
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_role'] = $user['role']; 
+                header("Location: ../accountOpen.php");
+                exit();
+            }
         } else {
             $error = "Your Login Name or Password is invalid";
         }

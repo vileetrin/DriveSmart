@@ -147,6 +147,11 @@ $profileImage = (!empty($user['image']) && $user['image'] !== NULL) ? $user['ima
                 <button class="fav-cars-btn">Обрані машини</button>
             </form>
         </div>
+        <div class="fav-cars-container">
+            <form action="../reservationsOpen.php">
+                <button class="fav-cars-btn">Наявні бронювання</button>
+            </form>
+        </div>
         <div class="profile-info-container">
             <div class="profile-card">
                 <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Profile Picture">
