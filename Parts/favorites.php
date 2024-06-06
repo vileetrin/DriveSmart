@@ -6,6 +6,7 @@ ini_set('display_errors', 1);
 require_once 'DBConnection.php';
 
 $database = new DBConnection();
+$database->getPDO()->exec("SET time_zone = '+03:00';");
 $user_id = $_SESSION['user_id'];
 
 $stmt = $database->getPDO()->prepare('SELECT cars.* FROM cars JOIN favorites ON cars.car_id = favorites.car_id WHERE favorites.user_id = :user_id');
@@ -13,6 +14,13 @@ $stmt->bindParam(':user_id', $user_id);
 $stmt->execute();
 
 $cars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+function isCarBooked($car_id, $database) {
+    $stmt = $database->getPDO()->prepare('SELECT COUNT(*) FROM reservations WHERE car_id = :car_id AND NOW() BETWEEN start_time AND end_time');
+    $stmt->bindParam(':car_id', $car_id);
+    $stmt->execute();
+    return $stmt->fetchColumn() > 0;
+}
 
 if (isset($_POST['delete'])) {
     $car_id = intval($_POST['car_id']);
@@ -22,6 +30,7 @@ if (isset($_POST['delete'])) {
     $delete_stmt->bindParam(':car_id', $car_id);
     $delete_stmt->execute();
 
+    header('Location: ../favoritiesOpen.php');
     exit();
 }
 ?>
@@ -70,10 +79,23 @@ if (isset($_POST['delete'])) {
                         <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
                         <button class="delete-button" type="submit" name="delete">Видалити</button>
                     </form>
+
+                    <?php if (!isCarBooked($car['car_id'], $database)) { ?>
+                            <form method="POST" action="bookingOpen.php">
+                                <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
+                                <button type="submit" class="book-button">Бронювати</button>
+                            </form>
+                        <?php } else { 
+                            ?>
+                            <button class="book-button" disabled>Недоступний</button>
+                        <?php } 
+                    ?>
+
                     <form method="GET" action="bookingOpen.php">
                         <input type="hidden" name="car_id" value="<?php echo $car['car_id']; ?>">
                         <button class="book-button" type="submit">Забронювати</button>
                     </form>
+
                 </div>
             </div>
             <?php 

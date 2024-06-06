@@ -19,12 +19,12 @@ class DBConnection {
     public function getPdo() {
         return $this->pdo;
     }
-    public function addUser($firstName, $lastName, $login, $email, $password, $role) {
+    public function addUser($firstName, $lastName, $login, $email, $password, $role, $image) {
         try {
             $sql = 'INSERT INTO users (first_name, last_name, email, login, password, role, image) VALUES (:first_name, :last_name, :email, :login, :password, :role, :image)';
             $stmt = $this->pdo->prepare($sql);
-            $stmt->bindParam(':firstName', $firstName);
-            $stmt->bindParam(':lastName', $lastName);
+            $stmt->bindParam(':first_name', $firstName);
+            $stmt->bindParam(':last_name', $lastName);
             $stmt->bindParam(':login', $login);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $password);
@@ -99,6 +99,17 @@ class DBConnection {
         } catch (PDOException $e) {
             echo "Помилка під час видалення автомобіля: " . $e->getMessage() . "<br>";
         }
+    }
+    public function blockUser($user_id) {
+        $stmt = $this->pdo->prepare("UPDATE users SET blocked = 1 WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function unblockUser($user_id) {
+        $stmt = $this->pdo->prepare("UPDATE users SET blocked = 0 WHERE user_id = :user_id");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
     }
     public function fetchCarById($car_id) {
         try {
@@ -238,8 +249,31 @@ public function updateReservationStatus($user_id, $car_id, $start_time, $end_tim
     $stmt->bindParam(':end_time', $end_time);
     $stmt->execute();
 }
-
-    // Функция для получения всех форумов
+  
+public function fetchUserReservations($user_id) {
+    $stmt = $this->pdo->prepare('
+        SELECT reservations.*, cars.model, cars.make, cars.image 
+        FROM reservations 
+        JOIN cars ON reservations.car_id = cars.car_id 
+        WHERE reservations.user_id = :user_id
+    ');
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function getReservationById($user_id, $car_id, $start_date, $end_date, $amount) {
+    $sql = "INSERT INTO reservations (user_id, car_id, start_time, end_time, amount, status) 
+            VALUES (:user_id, :car_id, :start_date, :end_date, :amount, 'unpaid')";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->bindParam(':user_id', $user_id);
+    $stmt->bindParam(':car_id', $car_id);
+    $stmt->bindParam(':start_date', $start_date);
+    $stmt->bindParam(':end_date', $end_date);
+    $stmt->bindParam(':amount', $amount);
+    $stmt->execute();
+}
+  
+      // Функция для получения всех форумов
     public function fetchAllForums() {
         try {
             $stmt = $this->pdo->query("SELECT * FROM forums");
@@ -269,7 +303,6 @@ public function updateReservationStatus($user_id, $car_id, $start_time, $end_tim
             return [];
         }
     }
-
 
 }
 

@@ -154,6 +154,7 @@
     transition: background-color 300ms ease-in, border-color 2s ease-in;
     font-family: Montserrat, sans-serif;
     font-weight: normal;
+    font-size: medium;
     width: 250px;
     height: 50px;
 }
@@ -163,8 +164,7 @@
     display: flex;
     justify-content: flex-end;
     margin-right: 22%;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .fav-cars-btn:hover {

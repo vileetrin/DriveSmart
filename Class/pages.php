@@ -216,6 +216,21 @@
         }  
     }
 
+    class ReservationsPage extends Page 
+    {
+        public function __construct()
+        {
+            $this->title = "Оплата";
+            require_once 'Class/cars.php';
+            session_start();
+        }
+    
+        public function ShowContent()
+        {
+            include "Parts/reservations.php";
+        }  
+    }
+
     class MapPage extends Page 
 {
     public function __construct()

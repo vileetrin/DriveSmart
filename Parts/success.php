@@ -57,12 +57,12 @@ try {
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    <div class="container">
+    <div class="selected-cars-container">
         <main>
+            <div class='no-cars-card'>
             <div class="success-section">
                 <h1>Оплата успішна</h1>
                 <p>Дякуємо за вашу оплату! Ваша транзакція була успішною.</p>
-                <div class='no-cars-card'>
                     <a href="../accountOpen.php">Повернутися до акаунта</a>
             </div>
         </main>
