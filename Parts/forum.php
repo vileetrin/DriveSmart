@@ -1,164 +1,92 @@
 <?php
+session_start();
 require_once 'DBConnection.php';
 
 $db = new DBConnection();
 $pdo = $db->getPdo();
 
-$columnCheckQuery = $pdo->query("SHOW COLUMNS FROM forum LIKE 'forum_id'");
-$columnExists = $columnCheckQuery->fetch();
+echo '<link rel="stylesheet" href="forum.css">';
 
-if (!$columnExists) {
-
-    $pdo->exec("ALTER TABLE forum ADD COLUMN forum_id INT NOT NULL");
-
-    $pdo->exec("UPDATE forum SET forum_id = 1 WHERE forum_id IS NULL");
-}
-
-$forum_id = isset($_GET['forum_id']) ? (int)$_GET['forum_id'] : null;
-$forum_name = '';
-
-if ($forum_id) {
-    switch ($forum_id) {
-        case 1:
-            $forum_name = 'Рекомендації щодо вибору автомобіля';
-            break;
-        case 2:
-            $forum_name = 'Спільні поїздки та різні маршрути';
-            break;
-        case 3:
-            $forum_name = 'Послуги та тарифи';
-            break;
-        default:
-            $forum_name = 'Форум';
-            break;
-    }
-
-    $stmt = $pdo->prepare("SELECT f.*, u.login AS username FROM forum f JOIN users u ON f.user_id = u.user_id WHERE f.forum_id = :forum_id ORDER BY created_at DESC");
-    $stmt->execute(['forum_id' => $forum_id]);
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} else {
-    $messages = [];
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json'); // Устанавливаем заголовок JSON
-    $user_id = $_POST['user_id'];
-    $review_text = $_POST['review_text'];
-    $rating = $_POST['rating'];
-    $forum_id = $_POST['forum_id'];
-    
+function displayForum($pdo, $forum_id) {
     try {
-        $stmt = $pdo->prepare("INSERT INTO forum (user_id, review_text, rating, created_at, forum_id) VALUES (:user_id, :review_text, :rating, NOW(), :forum_id)");
-        $stmt->execute(['user_id' => $user_id, 'review_text' => $review_text, 'rating' => $rating, 'forum_id' => $forum_id]);
-        echo json_encode(['status' => 'success']);
+        $stmt_forum = $pdo->prepare("SELECT * FROM forums WHERE forum_id = :forum_id");
+        $stmt_forum->bindParam(':forum_id', $forum_id);
+        $stmt_forum->execute();
+        $forum = $stmt_forum->fetch(PDO::FETCH_ASSOC);
+
+        if ($forum) {
+            echo "<h2 class='forum-title'>" . htmlspecialchars($forum['forum_name']) . "</h2>";
+
+            $stmt_messages = $pdo->prepare("SELECT * FROM messages WHERE forum_id = :forum_id ORDER BY created_at DESC");
+            $stmt_messages->bindParam(':forum_id', $forum_id);
+            $stmt_messages->execute();
+            $messages = $stmt_messages->fetchAll(PDO::FETCH_ASSOC);
+
+            echo '<div class="messages-section">';
+            echo '<h3 class="messages-title">Повідомлення:</h3>';
+            echo '<div class="messages-container">';
+            foreach ($messages as $message) {
+                echo "<div class='message'>";
+                echo "<strong class='message-user'>Користувач " . $message['user_id'] . ":</strong> " . htmlspecialchars($message['message_text']);
+                echo "<br><small class='message-date'>" . $message['created_at'] . "</small>";
+                echo "</div><hr>";
+            }
+            echo '</div>';
+            echo '</div>';
+
+            echo '<h3 class="send-message-title">Відправити повідомлення:</h3>';
+            echo '<form class="message-form" method="POST" action="">
+                    <input type="hidden" name="forum_id" value="' . $forum_id . '">
+                    <textarea class="message-text" name="message_text" required></textarea><br>
+                    <input class="submit-button" type="submit" value="Відправити">
+                  </form>';
+        } else {
+            echo "<p>Форум не найден.</p>";
+        }
     } catch (PDOException $e) {
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        echo "Ошибка при выполнении запроса: " . $e->getMessage();
     }
-    exit;
+}
+
+if (isset($_GET['forum_id'])) {
+    $forum_id = $_GET['forum_id'];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message_text'])) {
+        try {
+            $message_text = $_POST['message_text'];
+            $user_id = $_SESSION['user_id']; 
+
+            $stmt = $pdo->prepare("INSERT INTO messages (forum_id, user_id, message_text, created_at) VALUES (:forum_id, :user_id, :message_text, NOW())");
+            $stmt->bindParam(':forum_id', $forum_id);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':message_text', $message_text);
+            $stmt->execute();
+
+            header("Location: " . $_SERVER['PHP_SELF'] . "?forum_id=" . $forum_id);
+            exit();
+        } catch (PDOException $e) {
+            echo "Ошибка при отправке сообщения: " . $e->getMessage();
+        }
+    } else {
+        displayForum($pdo, $forum_id);
+    }
+} else {
+    try {
+        $stmt = $pdo->query("SELECT * FROM forums");
+        $forums = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        echo "<h2 class='forums-title'><span class='forums-header'>Форуми</span> для обговорень</h2>";
+        foreach ($forums as $forum) {
+            echo "<div class='forum'>";
+            echo "<div class='forum-header'>";
+            echo "<strong class='forum-name'>" . htmlspecialchars($forum['forum_name']) . "</strong>";
+            echo "<a class='join-button' href='?forum_id=" . $forum['forum_id'] . "'><button>Долучитися</button></a>";
+            echo "</div>";
+            echo "<p class='forum-description'>" . htmlspecialchars($forum['forum_description']) . "</p>";
+            echo "</div><hr>";
+        }
+
+    } catch (PDOException $e) {
+        echo "Ошибка при выполнении запроса: " . $e->getMessage();
+    }
 }
 ?>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Форум</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="chat-container">
-        <h1>Форум</h1>
-        <div class="forums-container">
-            <p class="choose-forum-text">Оберіть форум:</p>
-            <nav>
-                <ul class="forums-list">
-                    <li><a href="?forum_id=1">Рекомендації щодо вибору автомобіля</a></li>
-                    <li><a href="?forum_id=2">Спільні поїздки та різні маршрути</a></li>
-                    <li><a href="?forum_id=3">Послуги та тарифи</a></li>
-                </ul>
-            </nav>
-        </div>
-        <div id="forum-content" style="display: <?= $forum_id ? 'block' : 'none' ?>;">
-            <h2 id="forum-title"><?= htmlspecialchars($forum_name) ?></h2>
-            <div class="chat-box" id="chat-box">
-                <?php foreach ($messages as $message): ?>
-                    <div class="chat-message">
-                        <strong class="username"><?= htmlspecialchars($message['username']) ?></strong>
-                        <p class="message-text"><?= htmlspecialchars($message['review_text']) ?></p>
-                        <div class="message-footer">
-                            <span class="rating">Оценка: <?= htmlspecialchars($message['rating']) ?></span>
-                            <span class="timestamp"><?= date('Y-m-d H:i:s', strtotime($message['created_at'])) ?></span>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <form class="formforum" id="chat-form">
-                <input type="hidden" id="user_id" value="1"> <!-- Измените это в соответствии с вашей системой управления пользователями -->
-                <input type="hidden" id="forum_id" value="<?= $forum_id ?>">
-                <textarea id="review_text" placeholder="Повідомлення" required></textarea>
-                <select id="rating" required>
-                    <option value="" disabled selected>Оцініти</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button type="submit">Відправити</button>
-            </form>
-        </div>
-    </div>
-    <script>
-    document.getElementById('chat-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const user_id = document.getElementById('user_id').value;
-        const review_text = document.getElementById('review_text').value;
-        const rating = document.getElementById('rating').value;
-        const forum_id = document.getElementById('forum_id').value;
-
-        fetch('', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                'user_id': user_id,
-                'review_text': review_text,
-                'rating': rating,
-                'forum_id': forum_id
-            })
-        }).then(response => response.json())
-          .then(data => {
-              if (data.status === 'success') {
-                  document.getElementById('review_text').value = '';
-                  document.getElementById('rating').value = '';
-                  loadMessages(); // Обновление сообщений после успешной отправки
-              } else {
-                  console.error('Error:', data.message);
-              }
-          }).catch(error => console.error('Fetch Error:', error));
-    });
-
-    function loadMessages() {
-        const forum_id = document.getElementById('forum_id').value;
-        fetch('?forum_id=' + forum_id)
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const chatBox = doc.querySelector('#chat-box');
-                if (chatBox) {
-                    const messages = chatBox.innerHTML;
-                    document.getElementById('chat-box').innerHTML = messages;
-                }
-                const forumTitle = doc.querySelector('#forum-title');
-                if (forumTitle) {
-                    document.querySelector('#forum-title').innerText = forumTitle.innerText;
-                }
-                document.getElementById('forum-content').style.display = 'block';
-            }).catch(error => console.error('Load Messages Error:', error));
-    }
-
-    setInterval(loadMessages, 5000); // Обновление сообщений каждые 5 секунд
-</script>
-</body>
-</html>
