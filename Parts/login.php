@@ -129,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button class="social-btn facebook" onclick="window.location.href='../facebook-oauth.php'">
                     <img src="../img/entypo-social_facebook.png" alt="Facebook Icon" class="social-icon"> Увійти за допомогою Facebook
                 </button>
-                <button class="social-btn google">
+                <button class="social-btn google" onclick="window.location.href='google-oauth.php'">
                     <img src="../img/flat-color-icons_google.png" alt="Google Icon" class="social-icon"> Увійти за допомогою Google
                 </button>
             </div>
