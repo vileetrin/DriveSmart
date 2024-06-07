@@ -3,6 +3,7 @@ session_start();
 require_once 'DBConnection.php';
 require_once 'vendor/autoload.php';
 
+
 $client = new Google_Client();
 $client->setClientId('954848789374-k3k5mfbsakvmlcgr5jagi62viou8dic5.apps.googleusercontent.com');
 $client->setClientSecret('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');
