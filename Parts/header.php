@@ -28,7 +28,7 @@ $isAdmin = isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin';
                         <li class="main-nav-list-item"><a href="#" class="main-nav-link">Маршрути</a></li>
                     <?php else: ?>
                         <li class="main-nav-list-item"><a href="./catalogOpen.php" class="main-nav-link">Пропозиції</a></li>
-                        <li class="main-nav-list-item"><a href="./page-3.html" class="main-nav-link">Мапа</a></li>
+                        <li class="main-nav-list-item"><a href="../mapOpen.php" class="main-nav-link">Мапа</a></li>
                         <li class="main-nav-list-item"><a href="../forumOpen.php" class="main-nav-link">Форум</a></li>
                         <li><button type="button" class="header-btn">Завантажити додаток</button></li>
                     <?php endif; ?>
