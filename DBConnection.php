@@ -19,6 +19,45 @@ class DBConnection {
     public function getPdo() {
         return $this->pdo;
     }
+
+    public function addUserAndCarTransaction($user, $car) {
+    try {
+        $this->pdo->beginTransaction();
+
+        $userSql = 'INSERT INTO users (first_name, last_name, email, login, password, role, image) 
+                    VALUES (:first_name, :last_name, :email, :login, :password, :role, :image)';
+        $userStmt = $this->pdo->prepare($userSql);
+        $userStmt->execute($user);
+
+        $carSql = 'INSERT INTO cars (make, model, category, color, image, price_per_hour) 
+                   VALUES (:make, :model, :category, :color, :image, :price_per_hour)';
+        $carStmt = $this->pdo->prepare($carSql);
+        $carStmt->execute($car);
+
+        $this->pdo->commit();
+        echo "Користувача та автомобіль успішно додано.<br>";
+    } catch (PDOException $e) {
+        $this->pdo->rollBack();
+        echo "Помилка під час виконання транзакції: " . $e->getMessage() . "<br>";
+    }
+}
+
+public function addMultipleUsers($users) {
+    try {
+        $sql = 'INSERT INTO users (first_name, last_name, email, login, password, role, image) 
+                VALUES (:first_name, :last_name, :email, :login, :password, :role, :image)';
+        $stmt = $this->pdo->prepare($sql);
+
+        foreach ($users as $user) {
+            $stmt->execute($user);
+        }
+        echo "Користувачів успішно додано.<br>";
+    } catch (PDOException $e) {
+        echo "Помилка під час додавання користувачів: " . $e->getMessage() . "<br>";
+    }
+}
+
+
     public function addUser($firstName, $lastName, $login, $email, $password, $role, $image) {
         try {
             $sql = 'INSERT INTO users (first_name, last_name, email, login, password, role, image) VALUES (:first_name, :last_name, :email, :login, :password, :role, :image)';
@@ -273,19 +312,17 @@ public function getReservationById($user_id, $car_id, $start_date, $end_date, $a
     $stmt->execute();
 }
   
-      // Функция для получения всех форумов
     public function fetchAllForums() {
         try {
             $stmt = $this->pdo->query("SELECT * FROM forums");
             $forums = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $forums;
         } catch (PDOException $e) {
-            echo "Ошибка при получении форумов: " . $e->getMessage() . "<br>";
+            echo "Помилка при отриманні форумів: " . $e->getMessage() . "<br>";
             return [];
         }
     }
 
-    // Функция для получения сообщений из конкретного форума
     public function fetchMessagesByForum($forum_id) {
         try {
             $sql = 'SELECT m.message_id, m.message_text, m.created_at, u.username 
@@ -299,7 +336,7 @@ public function getReservationById($user_id, $car_id, $start_date, $end_date, $a
             $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $messages;
         } catch (PDOException $e) {
-            echo "Ошибка при получении сообщений: " . $e->getMessage() . "<br>";
+            echo "Помилка при отриманні повідомлень: " . $e->getMessage() . "<br>";
             return [];
         }
     }
