@@ -1,18 +1,22 @@
 <?php
 require_once 'DBConnection.php';
 
-// Включення всіх помилок і попереджень для відладки
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 function isPasswordStrong($password) {
-    // Пароль має бути не менше 8 символів, містити великі та малі літери, цифри та спеціальні символи
     $pattern = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/';
     return preg_match($pattern, $password);
 }
 
-$error = "";
+function isEmailValid($email) {
+    $pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+    return preg_match($pattern, $email);
+}
+
+$emailError = "";
+$passwordError = "";
 $firstName = "";
 $lastName = "";
 $email = "";
@@ -25,12 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $login = $_POST['login'];
     $password = $_POST['password'];
-    $role = 'user'; // Роль за замовчуванням
+    $role = 'user';
 
-    // Перевірка надійності паролю
+    if (!isEmailValid($email)) {
+        $emailError = "Некоректний формат електронної пошти.";
+    } 
+    
     if (!isPasswordStrong($password)) {
-        $error = "Пароль має бути не менше 8 символів, містити великі та малі літери, цифри та спеціальні символи.";
-    } else {
+        $passwordError = "Пароль має бути не менше 8 символів, містити великі та малі літери, цифри та спеціальні символи.";
+    } 
+    
+    if (empty($emailError) && empty($passwordError)) {
         $db = new DBConnection();
         $pdo = $db->getPdo();
 
@@ -54,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    // Обробка видалення акаунта
     if (isset($_POST['delete_account'])) {
         $db->deleteUser($user_id);
         session_destroy();
@@ -93,6 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-group">
                     <label for="email">Пошта</label>
                     <input type="text" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+                    <?php if ($emailError): ?>
+                        <p class="error-message"><?php echo $emailError; ?></p>
+                    <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="login">Логін</label>
@@ -101,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-group">
                     <label for="password">Пароль</label>
                     <input type="password" id="password" name="password" value="<?php echo htmlspecialchars($password); ?>" required>
-                    <?php if ($error): ?>
-                        <p class="error-message"><?php echo $error; ?></p>
+                    <?php if ($passwordError): ?>
+                        <p class="error-message"><?php echo $passwordError; ?></p>
                     <?php endif; ?>
                 </div>
                 <button type="submit" class="login-button">Зареєструватись</button>
